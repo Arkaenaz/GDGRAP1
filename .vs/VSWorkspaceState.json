@@ -1,7 +1,12 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\Pentagon",
+    "\\Pentagon\\Dependencies",
+    "\\Pentagon\\Dependencies\\include",
+    "\\Pentagon\\Dependencies\\lib-vc2022",
+    "\\Pentagon\\Pentagon"
   ],
-  "SelectedNode": "\\C:\\Users\\Shane\\Source\\Repos\\GDGRAP1",
+  "SelectedNode": "\\Pentagon\\Pentagon.sln",
   "PreviewInSolutionExplorer": false
 }
