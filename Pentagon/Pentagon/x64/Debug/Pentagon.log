@@ -1,3 +1,0 @@
-﻿  Pentagon.cpp
-C:\Users\shane\source\repos\GDGRAP1\Pentagon\Pentagon\Pentagon.cpp(112,9): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-  Pentagon.vcxproj -> C:\Users\shane\source\repos\GDGRAP1\Pentagon\x64\Debug\Pentagon.exe
