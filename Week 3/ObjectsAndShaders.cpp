@@ -24,16 +24,31 @@ void Key_Callback(
     if (action == GLFW_PRESS)
         switch (key) {
             case GLFW_KEY_W:
-                y_mod += 0.01f;
+                y_mod += 0.001f;
                 break;
             case GLFW_KEY_A:
-                x_mod -= 0.01f;
+                x_mod -= 0.001f;
                 break;
             case GLFW_KEY_S:
-                y_mod -= 0.01f;
+                y_mod -= 0.001f;
                 break;
             case GLFW_KEY_D:
-                x_mod += 0.01f;
+                x_mod += 0.001f;
+                break;
+        }
+    if (action == GLFW_RELEASE)
+        switch (key) {
+            case GLFW_KEY_W:
+                y_mod = 0.f;
+                break;
+            case GLFW_KEY_A:
+                x_mod = 0.f;
+                break;
+            case GLFW_KEY_S:
+                y_mod = 0.f;
+                break;
+            case GLFW_KEY_D:
+                x_mod = 0.f;
                 break;
         }
 }
@@ -160,15 +175,16 @@ int main(void)
     glm::mat4 translation = glm::translate(identity_matrix, glm::vec3(0, 0, 0));
     glm::mat4 scale = glm::scale(identity_matrix, glm::vec3(0, 0, 0));
 
-    float x = 0.5f;
-    float y = 0.5f;
-    float z = 0.5f;
+    float fTX = 0.5f;
+    float fTY = 0.5f;
+    float fTZ = 0.5f;
     float theta = 0.5f;
 
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        //glfwSetKeyCallback(window, Key_Callback);
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -179,12 +195,12 @@ int main(void)
         //unsigned int yLoc = glGetUniformLocation(shaderProgram, "y");
         //glUniform1f(yLoc, y_mod);
         theta += 0.5f;
-        x += x_mod;
-        y += y_mod;
+        fTX += x_mod;
+        fTY += y_mod;
 
-        glm::mat4 transformation_matrix = glm::translate(identity_matrix, glm::vec3(x, y, z));
+        glm::mat4 transformation_matrix = glm::translate(identity_matrix, glm::vec3(fTX, fTY, fTZ));
         transformation_matrix = glm::scale(transformation_matrix, glm::vec3(2, 2, 2));
-        transformation_matrix = glm::rotate(transformation_matrix, glm::radians(theta), glm::vec3(x, y, z));
+        transformation_matrix = glm::rotate(transformation_matrix, glm::radians(theta), glm::vec3(fTX, fTY, fTZ));
 
         unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
         glUniformMatrix4fv(transformLoc,
