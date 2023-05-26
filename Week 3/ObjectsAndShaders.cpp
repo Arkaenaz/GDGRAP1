@@ -11,8 +11,17 @@
 #include "string"
 #include "iostream"
 
-float x_mod = 0;
-float y_mod = 0;
+const float SCREEN_WIDTH = 600;
+const float SCREEN_HEIGHT = 600;
+
+float tx_mod = 0;
+float ty_mod = 0;
+float tz_mod = 0;
+float sx_mod = 0;
+float sy_mod = 0;
+float rx_mod = 0;
+float ry_mod = 0;
+
 
 void Key_Callback(
     GLFWwindow* window,
@@ -24,31 +33,83 @@ void Key_Callback(
     if (action == GLFW_PRESS)
         switch (key) {
             case GLFW_KEY_W:
-                y_mod += 0.001f;
+                ty_mod += 0.05f;
                 break;
             case GLFW_KEY_A:
-                x_mod -= 0.001f;
+                tx_mod -= 0.05f;
                 break;
             case GLFW_KEY_S:
-                y_mod -= 0.001f;
+                ty_mod -= 0.05f;
                 break;
             case GLFW_KEY_D:
-                x_mod += 0.001f;
+                tx_mod += 0.05f;
+                break;
+            case GLFW_KEY_UP:
+                ry_mod += 100.f;
+                break;
+            case GLFW_KEY_LEFT:
+                rx_mod -= 100.f;
+                break;
+            case GLFW_KEY_DOWN:
+                ry_mod -= 100.f;
+                break;
+            case GLFW_KEY_RIGHT:
+                rx_mod += 100.f;
+                break;
+            case GLFW_KEY_Z:
+                tz_mod -= 0.05f;
+                break;
+            case GLFW_KEY_X:
+                tz_mod += 0.05f;
+                break;
+            case GLFW_KEY_Q:
+                sx_mod -= 0.05f;
+                sy_mod -= 0.05f;
+                break;
+            case GLFW_KEY_E:
+                sx_mod += 0.05f;
+                sy_mod += 0.05f;
                 break;
         }
     if (action == GLFW_RELEASE)
         switch (key) {
             case GLFW_KEY_W:
-                y_mod = 0.f;
+                ty_mod = 0.f;
                 break;
             case GLFW_KEY_A:
-                x_mod = 0.f;
+                tx_mod = 0.f;
                 break;
             case GLFW_KEY_S:
-                y_mod = 0.f;
+                ty_mod = 0.f;
                 break;
             case GLFW_KEY_D:
-                x_mod = 0.f;
+                tx_mod = 0.f;
+                break;
+            case GLFW_KEY_UP:
+                ry_mod = 0.f;
+                break;
+            case GLFW_KEY_LEFT:
+                rx_mod = 0.f;
+                break;
+            case GLFW_KEY_DOWN:
+                ry_mod = 0.f;
+                break;
+            case GLFW_KEY_RIGHT:
+                rx_mod = 0.f;
+                break;
+            case GLFW_KEY_Z:
+                tz_mod = 0.f;
+                break;
+            case GLFW_KEY_X:
+                tz_mod = 0.f;
+                break;
+            case GLFW_KEY_Q:
+                sx_mod = 0.f;
+                sy_mod = 0.f;
+                break;
+            case GLFW_KEY_E:
+                sx_mod = 0.f;
+                sy_mod = 0.f;
                 break;
         }
 }
@@ -62,7 +123,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 640, "Shane Cab", NULL, NULL);
+    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Shane Cab", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -72,6 +133,11 @@ int main(void)
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
     gladLoadGL();
+
+    glViewport(0,   // Min X
+               0,   // Min Y
+               SCREEN_WIDTH, // Width
+               SCREEN_HEIGHT); // Height
 
     glfwSetKeyCallback(window, Key_Callback);
 
@@ -175,11 +241,25 @@ int main(void)
     glm::mat4 translation = glm::translate(identity_matrix, glm::vec3(0, 0, 0));
     glm::mat4 scale = glm::scale(identity_matrix, glm::vec3(0, 0, 0));
 
-    float fTX = 0.5f;
-    float fTY = 0.5f;
-    float fTZ = 0.5f;
-    float theta = 0.5f;
+    float fTX = 0.f;
+    float fTY = 0.f;
+    float fTZ = -5.f;
+    float fSX = 1.f;
+    float fSY = 1.f;
+    float fSZ = 1.f;
+    float fRX = 0.f;
+    float fRY = 0.f;
+    float fRZ = 180.f;
+    float theta = 180.f;
 
+    /*glm::mat4 projection = glm::ortho(-2.0f,    // Left Most Point
+                                       2.0f,    // Right Most Point
+                                      -2.0f,    // Bottom Most Point
+                                       2.0f,    // Top Most Point
+                                      -1.0f,    // Z Near
+                                       1.0f);   // Z Far*/
+
+    glm::mat4 projection = glm::perspective(glm::radians(6.f), SCREEN_HEIGHT / SCREEN_WIDTH, 0.1f, 100.0f);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -194,19 +274,30 @@ int main(void)
         //glUniform1f(xLoc, x_mod);
         //unsigned int yLoc = glGetUniformLocation(shaderProgram, "y");
         //glUniform1f(yLoc, y_mod);
-        theta += 0.5f;
-        fTX += x_mod;
-        fTY += y_mod;
-
+        //theta += 0.5f;
+        fTX += tx_mod;
+        fTY += ty_mod;
+        fTZ += tz_mod;
+        fRX += rx_mod;
+        fRY += ry_mod;
+        fSX += sx_mod;
+        fSY += sy_mod;
         glm::mat4 transformation_matrix = glm::translate(identity_matrix, glm::vec3(fTX, fTY, fTZ));
-        transformation_matrix = glm::scale(transformation_matrix, glm::vec3(2, 2, 2));
-        transformation_matrix = glm::rotate(transformation_matrix, glm::radians(theta), glm::vec3(fTX, fTY, fTZ));
+        transformation_matrix = glm::scale(transformation_matrix, glm::vec3(fSX, fSY, fSZ));
+        transformation_matrix = glm::rotate(transformation_matrix, glm::radians(theta), glm::vec3(fRX, fRY, fRZ));
 
         unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
         glUniformMatrix4fv(transformLoc,
                            1,
                            GL_FALSE,
                            glm::value_ptr(transformation_matrix)
+                           );
+
+        unsigned int projLoc = glGetUniformLocation(shaderProgram, "projection");
+        glUniformMatrix4fv(projLoc,
+                           1,
+                           GL_FALSE,
+                           glm::value_ptr(projection)
                            );
 
         glUseProgram(shaderProgram);
