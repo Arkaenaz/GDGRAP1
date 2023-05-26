@@ -1,5 +1,0 @@
-﻿  Pentagon.cpp
-C:\Users\Shane\source\repos\GDGRAP1\Pentagon\Pentagon\Pentagon.cpp(42,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Shane\source\repos\GDGRAP1\Pentagon\Pentagon\Pentagon.cpp(43,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  Pentagon.vcxproj -> C:\Users\Shane\source\repos\GDGRAP1\Pentagon\x64\Debug\Pentagon.exe
