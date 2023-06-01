@@ -19,9 +19,12 @@ float ty_mod = 0;
 float tz_mod = 0;
 float sx_mod = 0;
 float sy_mod = 0;
-float rx_mod = 0;
-float ry_mod = 0;
+float rx_mod = 1;
+float ry_mod = 1;
+float theta_mod = 0;
 
+const float BASE_SPEED = 0.1f;
+const float ROTATE_SPEED = 0.5f;
 
 void Key_Callback(
     GLFWwindow* window,
@@ -33,42 +36,50 @@ void Key_Callback(
     if (action == GLFW_PRESS)
         switch (key) {
             case GLFW_KEY_W:
-                ty_mod += 0.05f;
+                ty_mod += BASE_SPEED;
                 break;
             case GLFW_KEY_A:
-                tx_mod -= 0.05f;
+                tx_mod -= BASE_SPEED;
                 break;
             case GLFW_KEY_S:
-                ty_mod -= 0.05f;
+                ty_mod -= BASE_SPEED;
                 break;
             case GLFW_KEY_D:
-                tx_mod += 0.05f;
+                tx_mod += BASE_SPEED;
                 break;
             case GLFW_KEY_UP:
-                ry_mod += 100.f;
+                ry_mod = 0;
+                rx_mod = 1;
+                theta_mod += ROTATE_SPEED;
                 break;
             case GLFW_KEY_LEFT:
-                rx_mod -= 100.f;
+                rx_mod = 0;
+                ry_mod = 1;
+                theta_mod -= ROTATE_SPEED;
                 break;
             case GLFW_KEY_DOWN:
-                ry_mod -= 100.f;
+                ry_mod = 0;
+                rx_mod = 1;
+                theta_mod -= ROTATE_SPEED;
                 break;
             case GLFW_KEY_RIGHT:
-                rx_mod += 100.f;
+                rx_mod = 0;
+                ry_mod = 1;
+                theta_mod += ROTATE_SPEED;
                 break;
             case GLFW_KEY_Z:
-                tz_mod -= 0.05f;
+                tz_mod -= BASE_SPEED;
                 break;
             case GLFW_KEY_X:
-                tz_mod += 0.05f;
+                tz_mod += BASE_SPEED;
                 break;
             case GLFW_KEY_Q:
-                sx_mod -= 0.05f;
-                sy_mod -= 0.05f;
+                sx_mod -= BASE_SPEED;
+                sy_mod -= BASE_SPEED;
                 break;
             case GLFW_KEY_E:
-                sx_mod += 0.05f;
-                sy_mod += 0.05f;
+                sx_mod += BASE_SPEED;
+                sy_mod += BASE_SPEED;
                 break;
         }
     if (action == GLFW_RELEASE)
@@ -86,16 +97,16 @@ void Key_Callback(
                 tx_mod = 0.f;
                 break;
             case GLFW_KEY_UP:
-                ry_mod = 0.f;
+                theta_mod = 0.f;
                 break;
             case GLFW_KEY_LEFT:
-                rx_mod = 0.f;
+                theta_mod = 0.f;
                 break;
             case GLFW_KEY_DOWN:
-                ry_mod = 0.f;
+                theta_mod = 0.f;
                 break;
             case GLFW_KEY_RIGHT:
-                rx_mod = 0.f;
+                theta_mod = 0.f;
                 break;
             case GLFW_KEY_Z:
                 tz_mod = 0.f;
@@ -247,10 +258,10 @@ int main(void)
     float fSX = 1.f;
     float fSY = 1.f;
     float fSZ = 1.f;
-    float fRX = 0.f;
-    float fRY = 0.f;
-    float fRZ = 180.f;
-    float theta = 180.f;
+    float fRX = 1.f;
+    float fRY = 1.f;
+    float fRZ = 0.f;
+    float theta = 0.f;
 
     /*glm::mat4 projection = glm::ortho(-2.0f,    // Left Most Point
                                        2.0f,    // Right Most Point
@@ -259,7 +270,7 @@ int main(void)
                                       -1.0f,    // Z Near
                                        1.0f);   // Z Far*/
 
-    glm::mat4 projection = glm::perspective(glm::radians(6.f), SCREEN_HEIGHT / SCREEN_WIDTH, 0.1f, 100.0f);
+    glm::mat4 projection = glm::perspective(glm::radians(60.f), SCREEN_HEIGHT / SCREEN_WIDTH, 0.1f, 100.0f);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -278,13 +289,14 @@ int main(void)
         fTX += tx_mod;
         fTY += ty_mod;
         fTZ += tz_mod;
-        fRX += rx_mod;
-        fRY += ry_mod;
+        fRX = rx_mod;
+        fRY = ry_mod;
+        theta += theta_mod;
         fSX += sx_mod;
         fSY += sy_mod;
         glm::mat4 transformation_matrix = glm::translate(identity_matrix, glm::vec3(fTX, fTY, fTZ));
         transformation_matrix = glm::scale(transformation_matrix, glm::vec3(fSX, fSY, fSZ));
-        transformation_matrix = glm::rotate(transformation_matrix, glm::radians(theta), glm::vec3(fRX, fRY, fRZ));
+        transformation_matrix = glm::rotate(transformation_matrix, glm::radians(theta), glm::vec3(fRX, fRY, 0));
 
         unsigned int transformLoc = glGetUniformLocation(shaderProgram, "transform");
         glUniformMatrix4fv(transformLoc,
