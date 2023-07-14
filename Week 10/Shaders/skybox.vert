@@ -5,7 +5,7 @@ layout(location = 0) in vec3 aPos;
 //vec2 is for 2D
 //vec3 is for cubemaps
 
-out vec3 texCoord
+out vec3 texCoord;
 
 uniform mat4 projection;
 uniform mat4 view;

@@ -203,11 +203,11 @@ int main(void)
     const char* sky_f = sky_fragS.c_str();
 
     GLuint sky_vertShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(sky_vertShader, 1, &v, NULL);
+    glShaderSource(sky_vertShader, 1, &sky_v, NULL);
     glCompileShader(sky_vertShader);
 
     GLuint sky_fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(sky_fragShader, 1, &f, NULL);
+    glShaderSource(sky_fragShader, 1, &sky_f, NULL);
     glCompileShader(sky_fragShader);
 
     GLuint skyboxProgram = glCreateProgram();
@@ -306,14 +306,16 @@ int main(void)
         "Skybox/rainbow_up.png",
         "Skybox/rainbow_dn.png",
         "Skybox/rainbow_ft.png",
-        "Skybox/rainbow_bk.png",
+        "Skybox/rainbow_bk.png"
     };
 
     unsigned int skyboxTex;
     glGenTextures(1, &skyboxTex);
     glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -326,7 +328,7 @@ int main(void)
         if (data) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         }
-        stbi_image_free_(data);
+        stbi_image_free(data);
     }
 
     std::vector<GLuint> mesh_indices;
@@ -508,6 +510,30 @@ int main(void)
         //glm::mat4 viewMatrix = cameraOrientation * cameraPosMatrix;
         glm::mat4 viewMatrix = glm::lookAt(cameraPos, cameraCenter, worldUp);
 
+        glDepthMask(GL_FALSE);
+        glDepthFunc(GL_LEQUAL);
+
+        glUseProgram(skyboxProgram);
+
+        glm::mat4 skyView = glm::mat4(1.f);
+        skyView = glm::mat4(glm::mat3(viewMatrix));
+
+        unsigned int sky_ProjectionLoc = glGetUniformLocation(skyboxProgram, "projection");
+        glUniformMatrix4fv(sky_ProjectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
+        
+        unsigned int sky_ViewLoc = glGetUniformLocation(skyboxProgram, "view");
+        glUniformMatrix4fv(sky_ViewLoc, 1, GL_FALSE, glm::value_ptr(skyView));
+
+        glBindVertexArray(skyboxVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+
+        glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
+
+        glUseProgram(shaderProgram);
         //x_mod += 0.001f;
 
         //unsigned int xLoc = glGetUniformLocation(shaderProgram, "x");
@@ -576,7 +602,6 @@ int main(void)
         GLuint specPhongAddress = glGetUniformLocation(shaderProgram, "specPhong");
         glUniform1f(specPhongAddress, specPhong);
 
-        glUseProgram(shaderProgram);
         glBindVertexArray(VAO);
 
 
