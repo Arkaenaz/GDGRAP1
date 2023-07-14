@@ -300,6 +300,34 @@ int main(void)
 
     glEnableVertexAttribArray(0);
 
+    std::string facesSkybox[]{
+        "Skybox/rainbow_rt.png",
+        "Skybox/rainbow_lf.png",
+        "Skybox/rainbow_up.png",
+        "Skybox/rainbow_dn.png",
+        "Skybox/rainbow_ft.png",
+        "Skybox/rainbow_bk.png",
+    };
+
+    unsigned int skyboxTex;
+    glGenTextures(1, &skyboxTex);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTex);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    for (unsigned int i = 0; i < 6; i++) {
+        int w, h, skyCChannel;
+        stbi_set_flip_vertically_on_load(false);
+
+        unsigned char* data = stbi_load(facesSkybox[i].c_str(), &w, &h, &skyCChannel, 0);
+        if (data) {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        }
+        stbi_image_free_(data);
+    }
 
     std::vector<GLuint> mesh_indices;
     for (int i = 0; i < shape[0].mesh.indices.size(); i++) {
