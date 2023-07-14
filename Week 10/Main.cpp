@@ -190,6 +190,32 @@ int main(void)
 
     glLinkProgram(shaderProgram);
 
+    std::fstream sky_vertSrc("Shaders/skybox.vert");
+    std::stringstream sky_vertBuff;
+    sky_vertBuff << sky_vertSrc.rdbuf();
+    std::string sky_vertS = sky_vertBuff.str();
+    const char* sky_v = sky_vertS.c_str();
+
+    std::fstream sky_fragSrc("Shaders/skybox.frag");
+    std::stringstream sky_fragBuff;
+    sky_fragBuff << sky_fragSrc.rdbuf();
+    std::string sky_fragS = sky_fragBuff.str();
+    const char* sky_f = sky_fragS.c_str();
+
+    GLuint sky_vertShader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(sky_vertShader, 1, &v, NULL);
+    glCompileShader(sky_vertShader);
+
+    GLuint sky_fragShader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(sky_fragShader, 1, &f, NULL);
+    glCompileShader(sky_fragShader);
+
+    GLuint skyboxProgram = glCreateProgram();
+    glAttachShader(skyboxProgram, sky_vertShader);
+    glAttachShader(skyboxProgram, sky_fragShader);
+
+    glLinkProgram(skyboxProgram);
+
     GLfloat UV[]{
         0.f, 1.f,
         0.f, 0.f,
