@@ -23,7 +23,7 @@ float rx_mod = 1;
 float ry_mod = 1;
 float theta_mod = 0;
 
-const float BASE_SPEED = 0.1f;
+const float BASE_SPEED = 0.01f;
 const float ROTATE_SPEED = 0.5f;
 
 void Key_Callback(

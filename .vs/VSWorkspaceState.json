@@ -1,8 +1,11 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Week 3"
+    "\\Assignment 3",
+    "\\Week 3",
+    "\\Week 7",
+    "\\Week 7\\Shaders"
   ],
-  "SelectedNode": "\\Week 3\\ObjectsAndShaders.sln",
+  "SelectedNode": "\\Week 7\\Shaders\\sample.vert",
   "PreviewInSolutionExplorer": false
 }
